@@ -15,8 +15,9 @@ class CrearTablaGruposInteres extends Migration
     {
         Schema::create('grupos_interes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre', 128);
             $table->unsignedInteger('tema_id');
+            $table->string('nombre', 128);
+            $table->text('descripcion')->nullable();
             $table->timestamps();
 
             //$table->engine = 'InnoDB';

@@ -9,7 +9,7 @@ class GrupoInteres extends Model
     protected $table = 'grupos_interes';
 
     protected $fillable = [
-        'tema_id', 'nombre'
+        'tema_id', 'nombre', 'descripcion'
     ];
 
 }

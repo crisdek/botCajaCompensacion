@@ -41,13 +41,13 @@ class MenuPrincipalConversacion extends Conversation
                 switch($this->opcion)
                 {
                     case 1: 
-                        $bot->startConversation(new App\Http\Conversations\MenuPrincipalConversacion());
+                        $this->bot->startConversation(new ExplorarGruposConversacion());
                         break;
                     case 2: 
-                        $bot->startConversation(new App\Http\Conversations\ExplorarGruposConversacion());
+                        $this->bot->startConversation(new ProximasActividadesConversacion());
                         break;
                     case 3: 
-                        $bot->startConversation(new App\Http\Conversations\AdministrarSistemaConversacion());
+                        $this->bot->startConversation(new AdministrarSistemaConversacion());
                         break;
                     case 4: 
                         $this->say('Ha sido un placer tenerte por aquí, vuelve cuando quieras.');
@@ -63,5 +63,5 @@ class MenuPrincipalConversacion extends Conversation
 
         });
     }
-    
+
 }
