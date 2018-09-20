@@ -121,7 +121,7 @@ class ProximasActividadesConversacion extends Conversation
                 if ($answer->isInteractiveMessageReply())
                 {
                     $this->actividad_id = $answer->getValue();
-                    //$this->mostrarInformacionActividad();
+                    $this->mostrarInformacionActividad();
                     
                 }
                 else
@@ -134,5 +134,40 @@ class ProximasActividadesConversacion extends Conversation
 
             });
         }
+    }
+
+
+    /**
+     * Muestra la información de la actividad seleccionada
+     */
+    public function mostrarInformacionActividad()
+    {
+        //Obtener información de la actividad seleccionada
+        $actividad = \App\Actividad::find($this->actividad_id);
+
+        $this->bot->typesAndWaits(1);
+        $this->say($actividad->nombre . ": " . $actividad->descripcion);
+        $this->bot->typesAndWaits(2);
+        $this->say('Se realizará en la fecha ' . $actividad->fecha . ' con una duración de ' . $actividad->duracion . ' minutos y un costo de $' . $actividad->costo);
+
+        /*
+        //Se consulta si el usuario ya tiene una solicitud de ingreso al grupo
+        $gruposInteres = \App\SolicitudIngreso::where(
+            [
+                ['persona_id', '=', $this->persona->id],
+                ['grupo_interes_id', '=', $this->grupo_id]
+            ])->whereIn('estado', ['A', 'P'])->first();
+
+        if(count($gruposInteres) == 0)    
+        {
+            $this->solicitarIngreso();
+        }
+        else
+        {
+            $this->bot->typesAndWaits(1);
+            $this->say('Tu ya tienes una solicitud de ingreso para este grupo.');
+        }
+        */
+
     }
 }
