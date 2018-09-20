@@ -52,12 +52,14 @@ class ExplorarGruposConversacion extends Conversation
 
         if(count($temas) == 0)
         {
-                $this->bot->reply("Ups, no tengo temas disponibles.");
+            $this->bot->typesAndWaits(1);            
+            $this->bot->reply("Ups, no tengo temas disponibles.");
         }
         else
         {
             $cualOpcion = Question::create("Selecciona uno de los siguientes temas par ver los grupos de interés")->addButtons($botones);
 
+            $this->bot->typesAndWaits(1);
             $this->ask($cualOpcion, function (Answer $answer)
             {   
                 if ($answer->isInteractiveMessageReply())
@@ -69,6 +71,7 @@ class ExplorarGruposConversacion extends Conversation
                 else
                 {
                     // Si el usuario digitó su respuesta como texto
+                    $this->bot->typesAndWaits(1);
                     $this->say('Por favor elige una opción de la lista.');
                     $this->repeat();
                 }
@@ -88,8 +91,6 @@ class ExplorarGruposConversacion extends Conversation
         // Se consultar los grupos según el tema seleccionado
         $gruposInteres = \App\GrupoInteres::where('tema_id', $this->tema_id)->orderBy('nombre', 'asc')->get();
 
-        //$this->say('El tema seleccionado es: ' . $tema->nombre . ' y hay ' . count($gruposInteres) . ' grupos');
-
         // Mostrar los grupos uno por uno
         $botones = array();
         foreach($gruposInteres as $grupo)
@@ -99,12 +100,14 @@ class ExplorarGruposConversacion extends Conversation
 
         if(count($gruposInteres) == 0)
         {
-                $this->bot->reply("Ups, este tema no tiene grupos de interés .");
+            $this->bot->typesAndWaits(1);
+            $this->bot->reply("Ups, este tema no tiene grupos de interés .");
         }
         else
         {
             $cualOpcion = Question::create("Los siguientes son los grupos de interés asociados a " . $tema->nombre . ".  Selecciona uno para ver más información")->addButtons($botones);
 
+            $this->bot->typesAndWaits(1);
             $this->ask($cualOpcion, function (Answer $answer)
             {   
                 if ($answer->isInteractiveMessageReply())
@@ -115,6 +118,7 @@ class ExplorarGruposConversacion extends Conversation
                 else
                 {
                     // Si el usuario digitó su respuesta como texto
+                    $this->bot->typesAndWaits(1);
                     $this->say('Por favor elige una opción de la lista.');
                     $this->repeat();
                 }
@@ -129,9 +133,11 @@ class ExplorarGruposConversacion extends Conversation
      */
     public function mostrarInformacionGrupo()
     {
-        // Obtener informaciónd el grupo seleccionado
+        
+        //Obtener informaciónd el grupo seleccionado
         $grupo = \App\GrupoInteres::find($this->grupo_id);
 
+        $this->bot->typesAndWaits(1);
         $this->say('El grupo seleccionado es: ' . $grupo->nombre);
         $this->bot->typesAndWaits(1);
         $this->say( $grupo->descripcion);
@@ -149,8 +155,8 @@ class ExplorarGruposConversacion extends Conversation
         }
         else
         {
+            $this->bot->typesAndWaits(1);
             $this->say('Tu ya tienes una solicitud de ingreso para este grupo.');
-            
         }
 
     }
@@ -167,6 +173,7 @@ class ExplorarGruposConversacion extends Conversation
 
         $cualOpcion = Question::create("¿Te gustaría ingresar al grupo?")->addButtons($botones);
 
+        $this->bot->typesAndWaits(1);
         $this->ask($cualOpcion, function (Answer $answer)
         {   
             if ($answer->isInteractiveMessageReply())
@@ -182,19 +189,21 @@ class ExplorarGruposConversacion extends Conversation
                     ));
                     $solicitudIngreso->save();
         
+                    $this->bot->typesAndWaits(1);
                     $this->say('He registrado tu solicitud, nuestro equipo la revisará y te informaremos sobre el resultado');
                 }
                 else
                 {
+                    $this->bot->typesAndWaits(1);
                     $this->say('Bueno, tal vez en una próxima ocasión.');
                 }
 
-                $this->bot->typesAndWaits(1);
                 $this->verActividadesDelGrupo();
             }
             else
             {
                 // Si el usuario digitó su respuesta como texto
+                $this->bot->typesAndWaits(1);
                 $this->say('Por favor elige una opción de la lista.');
                 $this->repeat();
             }
@@ -213,6 +222,7 @@ class ExplorarGruposConversacion extends Conversation
 
         $cualOpcion = Question::create("¿Quieres ver las actividades asociadas a este grupo?")->addButtons($botones);
 
+        $this->bot->typesAndWaits(1);
         $this->ask($cualOpcion, function (Answer $answer)
         {   
             if ($answer->isInteractiveMessageReply())
@@ -239,6 +249,7 @@ class ExplorarGruposConversacion extends Conversation
             else
             {
                 // Si el usuario digitó su respuesta como texto
+                $this->bot->typesAndWaits(1);
                 $this->say('Por favor elige una opción de la lista.');
                 $this->repeat();
             }
