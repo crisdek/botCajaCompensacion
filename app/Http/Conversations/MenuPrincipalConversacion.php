@@ -18,9 +18,26 @@ class MenuPrincipalConversacion extends Conversation
      */
     public function run()
     {
+        $this->id = $this->bot->getUser()->getId();
+        $userinformation = $this->bot->userStorage()->find($this->id);
+        $element = $userinformation->get('ayuda_algo_mas');
+
+        if($element == 'S')
+        {
+            $this->bot->typesAndWaits(1);
+            $this->say('¿Te puedo ayudar en algo más?');
+
+            $this->bot->userStorage()->save([
+                'ayuda_algo_mas' => 'N'
+            ]);
+        }
+
         $this->mostrarMenuPrincipal();
     }
 
+    /**
+     * Muestra las opciones del menú principal
+     */
     public function mostrarMenuPrincipal()
     {
         // Preparar los botones de acuerdo con los servicios existentes

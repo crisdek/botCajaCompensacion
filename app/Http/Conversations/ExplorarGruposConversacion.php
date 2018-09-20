@@ -35,6 +35,9 @@ class ExplorarGruposConversacion extends Conversation
         $this->mostrarTemas();
     }
 
+    /**
+     * Muestra los temas de los grupos de interés
+     */
     public function mostrarTemas()
     {
         // Obtener los temas almacenados en la base de datos
@@ -74,6 +77,9 @@ class ExplorarGruposConversacion extends Conversation
         }
     }
 
+    /**
+     * Muestra los grupos asociados al tema seleccionado
+     */
     public function mostrarGrupos()
     {
         // Obtener los servicios almacenados en la base de datos
@@ -118,13 +124,16 @@ class ExplorarGruposConversacion extends Conversation
 
     }
 
+    /**
+     * Muestra la información del grupo seleccionado
+     */
     public function mostrarInformacionGrupo()
     {
         // Obtener informaciónd el grupo seleccionado
         $grupo = \App\GrupoInteres::find($this->grupo_id);
 
         $this->say('El grupo seleccionado es: ' . $grupo->nombre);
-        $this->bot->typesAndWaits(2);
+        $this->bot->typesAndWaits(1);
         $this->say( $grupo->descripcion);
 
         //Se consulta si el usuario ya tiene una solicitud de ingreso al grupo
@@ -141,19 +150,22 @@ class ExplorarGruposConversacion extends Conversation
         else
         {
             $this->say('Tu ya tienes una solicitud de ingreso para este grupo.');
-            //Mostrar conversación para ver próximas actividades
+            
         }
-
 
     }
 
+    /**
+     * En caso de que el usuario no tenga una solicitud aceptada o pendiente
+     * le permite realizar una solicitud de ingreso al grupo
+     */
     public function solicitarIngreso()
     {
         $botones = array();
         $botones[] = Button::create('Si')->value('S');
         $botones[] = Button::create('No')->value('N');
 
-        $cualOpcion = Question::create("¿Te gustaría inscribirte al grupo?")->addButtons($botones);
+        $cualOpcion = Question::create("¿Te gustaría ingresar al grupo?")->addButtons($botones);
 
         $this->ask($cualOpcion, function (Answer $answer)
         {   
@@ -175,7 +187,53 @@ class ExplorarGruposConversacion extends Conversation
                 else
                 {
                     $this->say('Bueno, tal vez en una próxima ocasión.');
-                    //Llamar convseración para te puedo ayudar en algo más
+                }
+
+                $this->bot->typesAndWaits(1);
+                $this->verActividadesDelGrupo();
+            }
+            else
+            {
+                // Si el usuario digitó su respuesta como texto
+                $this->say('Por favor elige una opción de la lista.');
+                $this->repeat();
+            }
+
+        });
+    }
+
+    /**
+     * Mostrar conversación para ver próximas actividades
+     */
+    public function verActividadesDelGrupo()
+    {
+        $botones = array();
+        $botones[] = Button::create('Si')->value('S');
+        $botones[] = Button::create('No')->value('N');
+
+        $cualOpcion = Question::create("¿Quieres ver las actividades asociadas a este grupo?")->addButtons($botones);
+
+        $this->ask($cualOpcion, function (Answer $answer)
+        {   
+            if ($answer->isInteractiveMessageReply())
+            {
+                $this->opcion = $answer->getValue();
+
+                if($this->opcion == 'S')
+                {
+                    //Asignar variable al user storage para tenerla disponible en otra conversación
+                    $this->bot->userStorage()->save([
+                        'grupo_interes_id' => $this->grupo_id
+                    ]);
+
+                    //Llamar a conversación para ver próximas actividades
+                    $this->bot->startConversation(new ProximasActividadesConversacion());
+            
+                }
+                else
+                {
+                    //Llamar conversación para te puedo ayudar en algo más
+                    $this->ayudarAlgoMas();
                 }
             }
             else
@@ -186,6 +244,19 @@ class ExplorarGruposConversacion extends Conversation
             }
 
         });
+    }
+
+    /**
+     * Retorna al menú principal del chat
+     */
+    public function ayudarAlgoMas()
+    {
+        //Asignar variable al user storage para tenerla disponible en otra conversación
+        $this->bot->userStorage()->save([
+            'ayuda_algo_mas' => 'S'
+        ]);
+
+        $this->bot->startConversation(new MenuPrincipalConversacion());
     }
 
 
