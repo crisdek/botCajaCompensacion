@@ -19,7 +19,11 @@ class AdministrarTemasConversacion extends Conversation
     {
         $this->mostrarMenuTemas();
     }
-
+   /**
+     * Muestra el menú para gestionar los temas.
+     *
+     * 
+     */
     public function mostrarMenuTemas()
     {
         // Preparar los botones de acuerdo con los servicios existentes
