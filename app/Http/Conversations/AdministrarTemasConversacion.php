@@ -141,12 +141,57 @@ class AdministrarTemasConversacion extends Conversation
                 }
                 else if ($this->opcion  == 2)
                 {
-                    $this->bot->typesAndWaits(1);
-                    $this->say('Bueno, tal vez en una próxima ocasión.');
+                    $grupos = \App\GrupoInteres::where('tema_id', $this->tema->id)->get();
+                    if(count($grupos) > 0)
+                    {
+                            $this->bot->reply("Ups, el tema tiene grupos de interés relacionados, no es posible borrarlo.");
+                            $this->mostrarMenuTemas(); 
+                    
+                    }else{
+
+
+                        $confirmacion = Question::create('¿Estás seguro de que deseas realmente borrar este tema?'.$this->tema->nombre)
+                        ->addButtons([
+                            Button::create('Confirmar')->value('si'),
+                            Button::create('Cancelar')->value('no')
+                        ]);
+               
+                    $this->ask($confirmacion, function (Answer $answer2) {
+                        if ($answer2->isInteractiveMessageReply()) {
+                            $opcion = $answer2->getValue();
+                        
+                            if($opcion == "si")
+                            {
+                                $this->say('Entendido, voy a borrar el tema '.$this->tema->nombre);
+                                
+                                $this->say('Se borró el tema...');
+                                $this->tema->where('nombre',$this->tema->nombre)->delete();
+                                $this->mostrarMenuTemas(); 
+
+
+                            }
+            
+                            if($opcion == "no")
+                            {
+                                $this->say('Entendido, cancelaré la solicitud.');
+                                $this->mostrarMenuTemas();
+                            }
+                        } else {
+                            $this->say('Por favor elige una opción de la lista.');
+                            $this->repeat();
+                        }
+                    });
+
+
+                    }
+                
+
+                    
                 }
                 else
                 {
-
+                    $this->bot->typesAndWaits(1);
+                    $this->say('Bueno, tal vez en una próxima ocasión.');
                 }
             }
             else
@@ -222,4 +267,6 @@ class AdministrarTemasConversacion extends Conversation
         $this->mostrarMenuTemas();
 
     }
+
+
 }
