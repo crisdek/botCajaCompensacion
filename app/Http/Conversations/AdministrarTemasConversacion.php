@@ -42,7 +42,7 @@ class AdministrarTemasConversacion extends Conversation
                         $this->consultarTemas();
                         break;
                     case 2: 
-                        $this->crearTema();
+                        $this->confirmarCreacionTema();
                         break;
                     case 3: 
                         $this->bot->startConversation(new AdministrarSistemaConversacion());
@@ -106,7 +106,7 @@ class AdministrarTemasConversacion extends Conversation
 
 
     /**
-     * Muestra la información de un grupo y permite editarlo o eliminarlo
+     * Muestra la información de un tema y permite editarlo o eliminarlo
      */
     public function mostrarInformacionTema()
     {
@@ -136,6 +136,7 @@ class AdministrarTemasConversacion extends Conversation
 
                         $this->bot->typesAndWaits(1);
                         $this->say('He actualizado el tema.');
+                        $this->mostrarMenuTemas();
                     });
                 }
                 else if ($this->opcion  == 2)
@@ -161,4 +162,64 @@ class AdministrarTemasConversacion extends Conversation
 
     }
 
+    /**
+     *Esta función confirma la creación de un tema 
+     */
+    public function confirmarCreacionTema()
+    {
+
+        $this->ask("¿Cuál será el nombre del nuevo tema?", function (Answer $answer)
+        {   
+                $this->nombre = $answer->getText();
+
+                $confirmacion = Question::create('¿Estás seguro de que deseas agregar este tema?'.$this->nombre)
+            ->addButtons([
+                Button::create('Confirmar')->value('si'),
+                Button::create('Cancelar')->value('no')
+            ]);
+
+        $this->ask($confirmacion, function (Answer $answer2) {
+            if ($answer2->isInteractiveMessageReply()) {
+                $opcion = $answer2->getValue();
+            
+                if($opcion == "si")
+                {
+                    $this->say('Entendido, voy a agregar el tema '.$this->nombre);
+                    $this->crearTema($this->nombre);
+                }
+
+                if($opcion == "no")
+                {
+                    $this->say('Entendido, cancelaré la solicitud.');
+                    $this->mostrarMenuTemas();
+                }
+            } else {
+                $this->say('Por favor elige una opción de la lista.');
+                $this->repeat();
+            }
+        });
+               
+    
+         
+        });
+    
+  
+    }
+
+    /**
+     * Esta función permite crear los temas
+     */
+    public function crearTema($nombre)
+    {
+
+
+        // Registra el tema
+	    $control = \App\Tema::create([
+        'nombre' => $nombre
+                  ]);
+        
+        $this->say('Se creo el tema '.$this->nombre);          
+        $this->mostrarMenuTemas();
+
+    }
 }
