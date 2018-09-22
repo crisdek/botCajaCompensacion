@@ -122,19 +122,20 @@ class ConsultarSolicitudesIngresoGrupos extends Conversation
         // Obtener los temas almacenados en la base de datos
         $solicitudesIngreso = 
         DB::table('solicitudes_ingreso')
-        ->select('solicitudes_ingreso.id', 'personas.nombres', 'personas.apellidos', 'grupos_interes.nombre')
+        ->select('solicitudes_ingreso.id', 'personas.nombres', 'personas.apellidos', 'personas.created_at', 'grupos_interes.nombre')
         ->distinct()
         ->join('personas', 'solicitudes_ingreso.persona_id', '=', 'personas.id')
         ->join('grupos_interes', 'solicitudes_ingreso.grupo_interes_id', '=', 'grupos_interes.id')
-        ->where('solicitudes_ingreso.estado', '<>', 1)
+        ->where('solicitudes_ingreso.estado', '<>', 'A')
         ->where('solicitudes_ingreso.grupo_interes_id', '=', $this->grupo_id)
         ->get();
 
         // Mostrar los temas uno por uno
         $botones = array();
+        $contador_solicitudes = 0;
         foreach($solicitudesIngreso as $solicitud)
         {
-            $botones[] = Button::create($solicitud->nombres)->value($solicitud->id);
+            $botones[] = Button::create($contador_solicitudes++ . '.' . ' ' .$solicitud->nombres . ' ' . $solicitud->apellidos . " ({$solicitud->created_at})")->value($solicitud->id);
         }
 
         if(count($solicitudesIngreso) == 0)
@@ -181,12 +182,12 @@ class ConsultarSolicitudesIngresoGrupos extends Conversation
                     case 'S':
                         DB::table('solicitudes_ingreso')
                         ->where('id', $this->id_solicitudes_ingreso)
-                        ->update(['estado' => 1]);
+                        ->update(['estado' => 'A']);
                         break;
                     case 'N':
                         DB::table('solicitudes_ingreso')
                         ->where('id', $this->id_solicitudes_ingreso)
-                        ->update(['estado' => 2]);
+                        ->update(['estado' => 'R']);
                         break;
                     default:
                         $this->say('Opción no valida.');
