@@ -45,7 +45,6 @@ class MenuPrincipalConversacion extends Conversation
         $botones[] = Button::create('Explorar grupos de interés')->value(1);
         $botones[] = Button::create('Próximas actividades')->value(2);
         $botones[] = Button::create('Administrar sistema')->value(3);
-        $botones[] = Button::create('Consultar solicitudes de ingreso a grupos')->value(4);
         $botones[] = Button::create('Nada')->value(0);
 
         $cualOpcion = Question::create("Selecciona una de las siguientes opciones")->addButtons($botones);
@@ -66,9 +65,6 @@ class MenuPrincipalConversacion extends Conversation
                         break;
                     case 3: 
                         $this->bot->startConversation(new AdministrarSistemaConversacion());
-                        break;
-                    case 4:
-                        $this->bot->startConversation(new ConsultarSolicitudesIngresoGrupos());
                         break;
                     default:
                         $this->say('Ha sido un placer tenerte por aquí, vuelve cuando quieras.');
