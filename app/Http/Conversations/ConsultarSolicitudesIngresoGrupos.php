@@ -3,7 +3,6 @@
 namespace App\Http\Conversations;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
-
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
@@ -140,7 +139,8 @@ class ConsultarSolicitudesIngresoGrupos extends Conversation
 
         if(count($solicitudesIngreso) == 0)
         {
-                $this->bot->reply("Tranquil@, no tienes solicitudes pendientes.");
+            $this->bot->reply("Tranquil@, no tienes solicitudes pendientes.");
+            $this->bot->startConversation(new AdministrarSistemaConversacion());
         }
         else
         {
@@ -192,27 +192,8 @@ class ConsultarSolicitudesIngresoGrupos extends Conversation
                         $this->say('Opción no valida.');
                         break;
                 }
-                $this->say('Se ha actulizado la solicitud.');
-
-                $opcionAceptar = Question::create("Desea ver otra solicitud?")->addButtons($botones);
-                $this->ask($opcionAceptar, function (Answer $answer)
-                {
-                    if ($answer->isInteractiveMessageReply())
-                    {
-                        $respuesta = $answer->getValue();
-                        switch ($respuesta) {
-                            case 'S':
-                                $this->mostrarTemas();
-                                break;
-                            case 'N':
-                                $bot->startConversation(new App\Http\Conversations\MenuPrincipalConversacion());
-                                break;
-                            default:
-                                $this->say('Opción no valida.');
-                                break;
-                        }
-                    }
-                });
+                $this->bot->reply('Se ha actulizado la solicitud.');
+                $this->bot->startConversation(new AdministrarSistemaConversacion());
             }
             else
             {
