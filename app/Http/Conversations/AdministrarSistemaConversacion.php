@@ -31,7 +31,6 @@ class AdministrarSistemaConversacion extends Conversation
         $botones[] = Button::create('Administrar temas')->value(2);
         $botones[] = Button::create('Administrar actividades')->value(3);
         $botones[] = Button::create('Ver las opciones anteriores')->value(4);
-        $botones[] = Button::create('Consultar solicitudes de ingreso a grupos')->value(5);
 
         $cualOpcion = Question::create("Selecciona una de las siguientes opciones de administrador")->addButtons($botones);
 
@@ -44,8 +43,8 @@ class AdministrarSistemaConversacion extends Conversation
                 switch($this->opcion)
                 {
                     case 1: 
-                        $this->bot->startConversation(new ConsultarSolicitudesConversacion());
-                        break;
+                    $this->bot->startConversation(new ConsultarSolicitudesIngresoGrupos());
+                    break;
                     case 2: 
                         $this->bot->startConversation(new AdministrarTemasConversacion());
                         break;
@@ -54,9 +53,6 @@ class AdministrarSistemaConversacion extends Conversation
                         break;
                     case 4: 
                         $this->bot->startConversation(new MenuPrincipalConversacion());
-                        break;
-                    case 5:
-                        $this->bot->startConversation(new ConsultarSolicitudesIngresoGrupos());
                         break;
                     default:
                         $this->say('Ha sido un placer tenerte por aquí, vuelve cuando quieras.');
