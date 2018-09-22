@@ -126,13 +126,13 @@ class ConsultarSolicitudesIngresoGrupos extends Conversation
         ->distinct()
         ->join('personas', 'solicitudes_ingreso.persona_id', '=', 'personas.id')
         ->join('grupos_interes', 'solicitudes_ingreso.grupo_interes_id', '=', 'grupos_interes.id')
-        ->where('solicitudes_ingreso.estado', '<>', 'A')
+        ->where('solicitudes_ingreso.estado', '=', 'P')
         ->where('solicitudes_ingreso.grupo_interes_id', '=', $this->grupo_id)
         ->get();
 
         // Mostrar los temas uno por uno
         $botones = array();
-        $contador_solicitudes = 0;
+        $contador_solicitudes = 1;
         foreach($solicitudesIngreso as $solicitud)
         {
             $botones[] = Button::create($contador_solicitudes++ . '.' . ' ' .$solicitud->nombres . ' ' . $solicitud->apellidos . " ({$solicitud->created_at})")->value($solicitud->id);
